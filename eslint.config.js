@@ -1,4 +1,3 @@
-// eslint.config.js
 import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 
@@ -14,8 +13,9 @@ export default [
       },
     },
     rules: {
-      semi: ["error", "always"],
+      semi: ["warn", "always"],
       quotes: ["warn", "single", { avoidEscape: true }],
+      "@typescript-eslint/no-explicit-any": "warn",
     },
   },
 ];

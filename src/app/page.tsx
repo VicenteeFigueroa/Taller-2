@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 //import { Input } from "@/components/ui/input";
@@ -37,7 +38,11 @@ export default function Home() {
               <p className="text-sm text-muted-foreground mb-2">
                 $ {(9990 + idx * 100).toLocaleString()}
               </p>
-              <Button size="sm">Ver más</Button>
+              <Link href={`/products/${idx + 1}`} className="mt-auto">
+                <Button size="sm" className="w-full">
+                  Ver más
+                </Button>
+              </Link>
             </div>
           ))}
         </div>

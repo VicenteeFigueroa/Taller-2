@@ -1,36 +1,48 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+Información del Equipo
+Integrante 1: Vicente Javier Figueroa Lazo, vicente.figueroa01@alumnos.ucn.cl, 21.536.417-8
+Integrante 2: Vicente Arnoldo Castro Zepeda, vicente.castro02@alumnos.ucn.cl, 21.448.750-0
 
-## Getting Started
+--Descripción del Proyecto--
+Este proyecto corresponde al desarrollo del frontend para un sistema de e-commerce llamado BLACKCAT, construido con Next.js 14 utilizando App Router. Se implementa una interfaz visual moderna, con páginas para registrar usuarios, iniciar sesión, ver productos destacados y acceder al detalle de cada producto.
+Por ahora, el proyecto tiene un enfoque visual no funcional: no hay conexión real al backend ni autenticación activa. Se encuentra preparado para futuras integraciones.
 
-First, run the development server:
+----Requisitos del Sistema----
+-Node.js v18 o superior
+-NPM
+-Git
+-Navegador moderno
+-Visual Studio Code (recomendado)
 
-```bash
+----Instalación y Ejecución-----
+Clonar el repositorio:
+git clone https://github.com/VicenteeFigueroa/Taller-2.git
+cd Taller-2
+
+Instalar dependencias:
+npm install
+
+Ejecutar la aplicación:
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La app estará disponible en:
+http://localhost:3000
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+----Estructura del Proyecto----
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+src/app: Definición de rutas como /, /register, /login, /products/[id]
+src/views: Vistas de las páginas (RegisterPage, ProductDetailPage, etc.)
+src/components: Navbar, modales, botones, campos, etc.
 
-## Learn More
+----Vistas Implementadas----
 
-To learn more about Next.js, take a look at the following resources:
+Home: Página principal con productos destacados
+Registro (/register): Formulario validado con zod y react-hook-form
+Inicio de sesión (/login): Vista visual de autenticación
+Detalle de Producto (/products/[id]): Vista con diseño visual del producto
+Navbar persistente: con logo y botón para login
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+----Routing y Navegación----
+Implementado con Link de Next.js (next/link)
+Desde la vista principal se puede acceder al detalle del producto mediante los botones "Ver más"
+El logo redirige al Home
+La barra superior (navbar) se mantiene entre vistas (registrar, iniciar sesión)

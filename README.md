@@ -46,3 +46,6 @@ Implementado con Link de Next.js (next/link)
 Desde la vista principal se puede acceder al detalle del producto mediante los botones "Ver más"
 El logo redirige al Home
 La barra superior (navbar) se mantiene entre vistas (registrar, iniciar sesión)
+
+----Figma----
+Link figma: https://www.figma.com/design/Y3A2jigVwZAPpsy1LFa8gQ/Usuario-no-autenticado?node-id=0-1&t=2FmxwTiU9SBaCkgS-1

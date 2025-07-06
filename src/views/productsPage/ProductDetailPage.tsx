@@ -3,7 +3,7 @@
 import { Navbar } from "@/components/Navbar";
 import { CartButton } from "@/components/CartButton";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Heart, Share2 } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -122,25 +122,6 @@ export const ProductDetailPage = ({ productId }: ProductDetailPageProps) => {
                     size="lg"
                     className="flex-1"
                   />
-                  <Button variant="outline" size="lg">
-                    <Heart className="h-4 w-4" />
-                  </Button>
-                  <Button variant="outline" size="lg">
-                    <Share2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Información adicional */}
-              <div className="border-t pt-6 space-y-4">
-                <div className="grid grid-cols-2 gap-4 text-sm">
-                  <div>
-                    <span className="font-medium">Envío:</span> Gratis a todo
-                    Chile
-                  </div>
-                  <div>
-                    <span className="font-medium">Garantía:</span> 12 meses
-                  </div>
                 </div>
               </div>
             </div>

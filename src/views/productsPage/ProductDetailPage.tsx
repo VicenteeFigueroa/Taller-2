@@ -1,6 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/Navbar";
 import { CartButton } from "@/components/CartButton";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -28,7 +27,6 @@ export const ProductDetailPage = ({ productId }: ProductDetailPageProps) => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 py-8">
           {/* Breadcrumb y navegación */}

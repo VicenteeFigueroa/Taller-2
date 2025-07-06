@@ -1,7 +1,12 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import { AuthProvider } from "@/contexts/auth/AuthContext";
 import { CartProvider } from "@/contexts/cart/CartContext";
+import { Navbar } from "@/components/Navbar";
+import { ReactNode } from "react";
+import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import type { Metadata } from "next";
+
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -18,17 +23,19 @@ export const metadata: Metadata = {
   description: "Tienda en línea con los mejores productos",
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <CartProvider>{children}</CartProvider>
+        <AuthProvider>
+          <CartProvider>
+            <Navbar />
+            {children}
+            <Toaster position="bottom-right" richColors />
+          </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

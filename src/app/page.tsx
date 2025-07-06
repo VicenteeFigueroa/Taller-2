@@ -7,16 +7,12 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 //import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
-import { Navbar } from "@/components/Navbar";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
 
   return (
     <div className="min-h-screen flex flex-col font-sans">
-      {/* NAVBAR */}
-      <Navbar />
-
       {/* CONTENIDO PRINCIPAL */}
       <main className="flex-1 max-w-7xl mx-auto p-4 sm:p-6 md:p-8">
         <h1 className="text-2xl font-bold mb-6">Productos destacados</h1>

@@ -19,6 +19,9 @@ import { ApiBackend } from "@/clients/axios";
 import { LoginResponse } from "@/interfaces/LoginResponse";
 import axios from "axios";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
+import { useAuth } from "@/contexts/auth/AuthContext";
 
 const formSchema = z.object({
   email: z
@@ -28,7 +31,7 @@ const formSchema = z.object({
   password: z.string().nonempty({ message: "Contraseña es requerida." }),
 });
 
-export const LoginPage = () => {
+export const LoginPage = ({ onSuccess }: { onSuccess?: () => void }) => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -38,6 +41,8 @@ export const LoginPage = () => {
   });
 
   const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
+  const { login } = useAuth();
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -48,11 +53,27 @@ export const LoginPage = () => {
       );
       const token = response.data.data?.token;
       if (!token) {
-        setFormError("No se recibió el token de autenticación.");
+        setFormError("No se recibió el token.");
         return;
       }
-      console.log("Token recibido:", token);
-      // Aquí puedes guardar el token, redirigir, etc.
+
+      const decoded: any = jwtDecode(token);
+      const role = decoded?.role;
+      const email = decoded?.email;
+      const firstName = decoded?.given_name || response.data.data?.firtsName;
+      const lastName = decoded?.family_name || response.data.data?.lastName;
+
+      const user = { firstName, lastName, email, role };
+
+      login(user, token);
+
+      if (onSuccess) onSuccess();
+
+      if (role === "Admin") {
+        router.push("/admin");
+      } else {
+        router.push("/user");
+      }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         if (error?.response?.status === 401) {

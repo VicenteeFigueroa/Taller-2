@@ -1,7 +1,5 @@
 "use client";
 
-import { Navbar } from "@/components/Navbar";
-
 interface ProductDetailPageProps {
   productId: string;
 }
@@ -17,7 +15,6 @@ export const ProductDetailPage = ({ productId }: ProductDetailPageProps) => {
 
   return (
     <>
-      <Navbar />
       <div className="min-h-screen p-6 bg-gray-50 flex flex-col md:flex-row gap-8">
         {/* Imagen (simulada) */}
         <div className="md:w-1/2 w-full">

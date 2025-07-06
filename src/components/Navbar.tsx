@@ -6,9 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { LoginModal } from "@/components/LoginModal";
+import { CartModal, CartIcon } from "@/components/CartModal";
 
 export const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
+  const [showCart, setShowCart] = useState(false);
 
   return (
     <>
@@ -25,6 +27,7 @@ export const Navbar = () => {
             className="max-w-md flex-1"
           />
           <div className="flex gap-2">
+            <CartIcon onClick={() => setShowCart(true)} />
             <Button variant="outline" onClick={() => setShowLogin(true)}>
               Iniciar Sesión
             </Button>
@@ -33,6 +36,7 @@ export const Navbar = () => {
       </header>
 
       <LoginModal open={showLogin} onOpenChange={setShowLogin} />
+      <CartModal open={showCart} onOpenChange={setShowCart} />
     </>
   );
 };

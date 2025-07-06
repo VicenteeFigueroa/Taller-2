@@ -3,11 +3,10 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-//import { Input } from "@/components/ui/input";
 import Image from "next/image";
-//import Link from "next/link";
 import { LoginModal } from "@/components/LoginModal";
 import { Navbar } from "@/components/Navbar";
+import { CartButton } from "@/components/CartButton";
 
 export default function Home() {
   const [showLogin, setShowLogin] = useState(false);
@@ -38,11 +37,18 @@ export default function Home() {
               <p className="text-sm text-muted-foreground mb-2">
                 $ {(9990 + idx * 100).toLocaleString()}
               </p>
-              <Link href={`/products/${idx + 1}`} className="mt-auto">
-                <Button size="sm" className="w-full">
-                  Ver más
-                </Button>
-              </Link>
+              <div className="mt-auto space-y-2">
+                <Link href={`/products/${idx + 1}`}>
+                  <Button size="sm" variant="outline" className="w-full">
+                    Ver más
+                  </Button>
+                </Link>
+                <CartButton
+                  productId={`${idx + 1}`}
+                  size="sm"
+                  className="w-full"
+                />
+              </div>
             </div>
           ))}
         </div>

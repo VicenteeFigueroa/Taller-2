@@ -72,7 +72,7 @@ export const LoginPage = ({ onSuccess }: { onSuccess?: () => void }) => {
       if (role === "Admin") {
         router.push("/admin");
       } else {
-        router.push("/user");
+        router.push("/");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

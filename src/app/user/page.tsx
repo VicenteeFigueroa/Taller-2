@@ -1,6 +1,6 @@
-import { LoginPage } from "@/views/loginPage/LoginPage";
+import ClientPage from "@/views/clientPage/ClientPage";
 
 export default function Login() {
   console.log("Login page loaded");
-  return <LoginPage />;
+  return <ClientPage />;
 }

@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { LoginModal } from "@/components/LoginModal";
 import { useAuth } from "@/contexts/auth/AuthContext";
+
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -31,21 +30,24 @@ export const Navbar = () => {
     router.push("/");
   };
 
+  const handleProfileRedirect = () => {
+    if (user?.role === "Admin") {
+      router.push("/admin");
+    } else {
+      router.push("/user");
+    }
+  };
+
   return (
     <>
       <header className="w-full shadow-sm bg-white dark:bg-black sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center gap-4 flex-wrap">
           <Link
             href="/"
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            className="text-2xl font-bold text-black dark:text-white hover:opacity-80 transition-opacity"
           >
-            <Image src="/logo.svg" alt="Logo" width={40} height={40} />
+            Blackcat
           </Link>
-
-          <Input
-            placeholder="Buscar productos..."
-            className="max-w-md flex-1"
-          />
 
           <div className="flex gap-2">
             <CartIcon onClick={() => setShowCart(true)} />
@@ -56,7 +58,7 @@ export const Navbar = () => {
                   <Button variant="outline">{`${user.firstName} ${user.lastName}`}</Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => router.push("/perfil")}>
+                  <DropdownMenuItem onClick={handleProfileRedirect}>
                     Mi perfil
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={handleLogout}>

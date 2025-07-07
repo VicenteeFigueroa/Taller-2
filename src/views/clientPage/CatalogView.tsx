@@ -131,7 +131,7 @@ export default function CatalogView() {
       <header className="sticky top-0 z-50 bg-white border-b shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
           <h1 className="text-xl sm:text-2xl font-bold text-center">
-            Productos
+            Catálogo
           </h1>
           <p className="text-center text-muted-foreground text-sm">
             Encuentra los mejores productos al mejor precio

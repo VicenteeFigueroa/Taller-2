@@ -12,25 +12,31 @@ interface CartItemComponentProps {
   className?: string;
 }
 
-export const CartItemComponent = ({ 
-  item, 
-  showControls = true, 
-  className = "" 
+export const CartItemComponent = ({
+  item,
+  showControls = true,
+  className = "",
 }: CartItemComponentProps) => {
-  const { updateProductQuantity, removeProductFromCart, isLoading } = useCartOperations();
+  const {
+    updateProductQuantitySimple,
+    removeProductFromCartSimple,
+    isLoading,
+  } = useCartOperations();
 
   const handleUpdateQuantity = async (newQuantity: number) => {
-    await updateProductQuantity(item.productId, newQuantity);
+    await updateProductQuantitySimple(item.productId, newQuantity);
   };
 
   const handleRemoveItem = async () => {
-    await removeProductFromCart(item.productId);
+    await removeProductFromCartSimple(item.productId);
   };
 
   const subtotal = item.price * item.quantity;
 
   return (
-    <div className={`flex items-center gap-4 p-4 border rounded-lg ${className}`}>
+    <div
+      className={`flex items-center gap-4 p-4 border rounded-lg ${className}`}
+    >
       {/* Imagen del producto */}
       <div className="flex-shrink-0 w-16 h-16 bg-gray-100 rounded-md overflow-hidden">
         {item.image ? (
@@ -73,11 +79,11 @@ export const CartItemComponent = ({
           >
             <Minus className="h-3 w-3" />
           </Button>
-          
+
           <span className="font-medium min-w-[2rem] text-center">
             {item.quantity}
           </span>
-          
+
           <Button
             variant="outline"
             size="icon"

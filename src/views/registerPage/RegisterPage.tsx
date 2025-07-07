@@ -150,7 +150,7 @@ export const RegisterPage = () => {
         {" "}
         {/* Ajusta la altura si el navbar mide 4rem */}
         {/* Lado izquierdo */}
-        <div className="md:w-1/2 w-full bg-blue-700 text-white flex flex-col justify-center items-center p-10">
+        <div className="md:w-1/2 w-full bg-black text-white flex flex-col justify-center items-center p-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center">
             Crea tu cuenta <br className="hidden md:block" />
           </h1>

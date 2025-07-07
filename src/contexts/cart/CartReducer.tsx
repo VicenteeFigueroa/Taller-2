@@ -1,6 +1,6 @@
 "use client";
 
-import { CartItem, CartState as ICartState } from "@/interfaces/Cart";
+import { CartItem } from "@/interfaces/Cart";
 
 export interface CartState {
   items: CartItem[];
@@ -11,41 +11,60 @@ export interface CartState {
 }
 
 export type CartAction =
-  | { type: "ADD_TO_CART"; payload: { productId: string; quantity: number } }
+  | {
+      type: "ADD_TO_CART";
+      payload: {
+        productId: string;
+        quantity: number;
+        productInfo?: {
+          name: string;
+          price: number;
+          image?: string;
+          stock: number;
+        };
+      };
+    }
   | { type: "REMOVE_FROM_CART"; payload: { productId: string } }
-  | { type: "UPDATE_QUANTITY"; payload: { productId: string; quantity: number } }
+  | {
+      type: "UPDATE_QUANTITY";
+      payload: { productId: string; quantity: number };
+    }
   | { type: "CLEAR_CART" }
   | { type: "SET_LOADING"; payload: boolean }
   | { type: "SET_ERROR"; payload: string | null }
   | { type: "LOAD_CART_SUCCESS"; payload: CartItem[] };
 
-export const cartReducer = (state: CartState, action: CartAction): CartState => {
+export const cartReducer = (
+  state: CartState,
+  action: CartAction,
+): CartState => {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const { productId, quantity } = action.payload;
-      const existingItem = state.items.find(item => item.productId === productId);
+      const { productId, quantity, productInfo } = action.payload;
+      const existingItem = state.items.find(
+        (item) => item.productId === productId,
+      );
 
       if (existingItem) {
         return {
           ...state,
-          items: state.items.map(item =>
+          items: state.items.map((item) =>
             item.productId === productId
               ? { ...item, quantity: item.quantity + quantity }
-              : item
+              : item,
           ),
         };
       }
 
-      // Si no existe, necesitamos crear un nuevo item
-      // En una implementación real, aquí harías una llamada a la API para obtener los datos del producto
+      // Si no existe, crear un nuevo item con la información del producto
       const newItem: CartItem = {
-        id: Date.now().toString(), // ID temporal
+        id: Date.now().toString(),
         productId,
-        name: `Producto ${productId}`, // Placeholder
-        price: 0, // Se debe obtener de la API
+        name: productInfo?.name || `Producto ${productId}`,
+        price: productInfo?.price || 0,
         quantity,
-        maxStock: 100, // Se debe obtener de la API
-        image: "", // Se debe obtener de la API
+        maxStock: productInfo?.stock || 100,
+        image: productInfo?.image || "",
       };
 
       return {
@@ -58,7 +77,7 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
       const { productId } = action.payload;
       return {
         ...state,
-        items: state.items.filter(item => item.productId !== productId),
+        items: state.items.filter((item) => item.productId !== productId),
       };
     }
 
@@ -66,10 +85,8 @@ export const cartReducer = (state: CartState, action: CartAction): CartState => 
       const { productId, quantity } = action.payload;
       return {
         ...state,
-        items: state.items.map(item =>
-          item.productId === productId
-            ? { ...item, quantity }
-            : item
+        items: state.items.map((item) =>
+          item.productId === productId ? { ...item, quantity } : item,
         ),
       };
     }

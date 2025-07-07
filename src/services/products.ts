@@ -50,3 +50,13 @@ export async function getProducts(params: FetchParams): Promise<Product[]> {
   const res = await ApiBackend.get(`/product?${query.toString()}`);
   return res.data.data || []; // Asegúrate que res.data.data sea correcto según tu API
 }
+
+export async function getProductById(id: string): Promise<Product | null> {
+  try {
+    const res = await ApiBackend.get(`/product/${id}`);
+    return res.data.data || null;
+  } catch (error) {
+    console.error("Error al obtener producto:", error);
+    return null;
+  }
+}

@@ -1,51 +1,88 @@
 "use client";
 
-import { useEffect, useState } from "react";
-//import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
+import { useAuth } from "@/contexts/auth/AuthContext";
+import { getProfile, updateProfile } from "@/clients/userService";
+
+const profileSchema = z.object({
+  firstName: z.string().nonempty("Nombre es requerido"),
+  email: z.string().email("Correo inválido").nonempty("Correo es requerido"),
+  phone: z.string().optional(),
+  birthDate: z.string().optional(),
+});
+
+type ProfileForm = z.infer<typeof profileSchema>;
 
 export default function ClientPage() {
-  //const router = useRouter();
+  const { token, updateUser } = useAuth();
 
-  const [form, setForm] = useState({
-    firstName: "",
-    email: "",
-    telephone: "",
-    birthDate: "",
+  const form = useForm<ProfileForm>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      firstName: "",
+      email: "",
+      phone: "",
+      birthDate: "",
+    },
   });
 
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = form;
+
   useEffect(() => {
-    // Simular datos de usuario
-    const fakeUser = {
-      firstName: "Juan",
-      email: "juan@example.com",
-      telephone: "+56 9 1234 5678",
-      birthDate: "1990-05-15",
+    const fetchProfile = async () => {
+      if (!token) return;
+
+      try {
+        const profile = await getProfile(token);
+        reset({
+          firstName: profile.firtsName || "",
+          email: profile.email || "",
+          phone: profile.thelephone || "", // backend tiene mal escrito "thelephone"
+          birthDate: profile.birthDate || "",
+        });
+      } catch (error) {
+        // eslint-disable-line @typescript-eslint/no-unused-vars
+        toast.error("Error al cargar el perfil");
+      }
     };
 
-    setForm({
-      firstName: fakeUser.firstName,
-      email: fakeUser.email,
-      telephone: fakeUser.telephone,
-      birthDate: fakeUser.birthDate,
-    });
-  }, []);
+    fetchProfile();
+  }, [token, reset]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const onSubmit = async (data: ProfileForm) => {
+    if (!token) return;
 
-  const handleSubmit = () => {
-    // Simulación de actualización exitosa
-    toast.success("Perfil actualizado", {
-      description: "Los datos han sido guardados exitosamente.",
-    });
+    try {
+      await updateProfile(token, {
+        firtsName: data.firstName,
+        email: data.email,
+        phone: data.phone,
+        birthDate: data.birthDate,
+      });
 
-    // Si quieres simular error:
-    // toast.error("Error al actualizar", { description: "Hubo un problema." });
+      updateUser({ firstName: data.firstName });
+
+      toast.success("Perfil actualizado", {
+        description: "Los datos han sido guardados exitosamente.",
+      });
+    } catch (error) {
+      // eslint-disable-line @typescript-eslint/no-unused-vars
+      toast.error("Error al actualizar", {
+        description: "Hubo un problema al guardar los datos.",
+      });
+    }
   };
 
   return (
@@ -56,56 +93,43 @@ export default function ClientPage() {
           Actualiza tu información personal
         </p>
 
-        <div className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div>
             <Label htmlFor="firstName">Nombre</Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              value={form.firstName}
-              onChange={handleChange}
-              placeholder="Tu nombre"
-            />
+            <Input id="firstName" {...register("firstName")} />
+            {errors.firstName && (
+              <p className="text-red-500 text-sm">{errors.firstName.message}</p>
+            )}
           </div>
 
           <div>
             <Label htmlFor="email">Correo electrónico</Label>
-            <Input
-              id="email"
-              name="email"
-              type="email"
-              value={form.email}
-              onChange={handleChange}
-              placeholder="ejemplo@correo.com"
-            />
+            <Input id="email" type="email" {...register("email")} />
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email.message}</p>
+            )}
           </div>
 
           <div>
-            <Label htmlFor="telephone">Teléfono</Label>
-            <Input
-              id="telephone"
-              name="telephone"
-              value={form.telephone}
-              onChange={handleChange}
-              placeholder="+56 9 1234 5678"
-            />
+            <Label htmlFor="phone">Teléfono</Label>
+            <Input id="phone" {...register("phone")} />
+            {errors.phone && (
+              <p className="text-red-500 text-sm">{errors.phone.message}</p>
+            )}
           </div>
 
           <div>
             <Label htmlFor="birthDate">Fecha de nacimiento</Label>
-            <Input
-              id="birthDate"
-              name="birthDate"
-              type="date"
-              value={form.birthDate}
-              onChange={handleChange}
-            />
+            <Input id="birthDate" type="date" {...register("birthDate")} />
+            {errors.birthDate && (
+              <p className="text-red-500 text-sm">{errors.birthDate.message}</p>
+            )}
           </div>
 
-          <Button onClick={handleSubmit} className="w-full mt-4">
-            Guardar cambios
+          <Button type="submit" disabled={isSubmitting} className="w-full mt-4">
+            {isSubmitting ? "Guardando..." : "Guardar cambios"}
           </Button>
-        </div>
+        </form>
       </main>
 
       <footer className="bg-muted py-6 mt-12 text-center text-sm text-muted-foreground">

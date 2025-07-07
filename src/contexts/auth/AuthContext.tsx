@@ -14,6 +14,7 @@ type AuthContextType = {
   token: string | null;
   login: (user: User, token: string) => void;
   logout: () => void;
+  updateUser: (updated: Partial<User>) => void; // NUEVO
 };
 
 const AuthContext = createContext<AuthContextType>({
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType>({
   token: null,
   login: () => {},
   logout: () => {},
+  updateUser: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -36,7 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(JSON.parse(storedUser));
         setToken(storedToken);
       } catch (error) {
-        console.error("Error leyendo sesión almacenada", error);
+        // eslint-disable-line @typescript-eslint/no-unused-vars
         setUser(null);
         setToken(null);
       }
@@ -57,8 +59,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem("token");
   };
 
+  const updateUser = (updated: Partial<User>) => {
+    if (!user) return;
+    const newUser = { ...user, ...updated };
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser));
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

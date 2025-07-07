@@ -23,3 +23,11 @@ export interface ShippingAddress {
   postalCode?: string;
   userId?: number;
 }
+
+export interface UpdateProfileDto {
+  firtsName?: string;
+  lastName?: string;
+  email?: string;
+  birthDate?: string; // Puede ser Date o string según tu backend
+  phone?: string;
+}

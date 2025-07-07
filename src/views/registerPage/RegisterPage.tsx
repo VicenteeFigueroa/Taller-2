@@ -1,9 +1,11 @@
 "use client";
 
-//import { useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,22 +18,41 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { authService } from "@/services/auth";
 
 const formSchema = z
   .object({
-    name: z.string().nonempty({ message: "Nombre es requerido." }),
-    email: z.string().email("Correo inválido").nonempty("Correo es requerido."),
-    phone: z
+    firtsName: z
       .string()
-      .min(9, { message: "Debe tener al menos 9 dígitos." })
-      .nonempty({ message: "Teléfono es requerido." }),
-    birthdate: z
+      .min(3, { message: "El nombre debe tener al menos 3 caracteres." })
+      .max(100, { message: "El nombre no puede tener más de 100 caracteres." }),
+    lastName: z
       .string()
-      .nonempty({ message: "Fecha de nacimiento es requerida." }),
-    password: z.string().min(6, { message: "Mínimo 6 caracteres." }),
+      .min(3, { message: "El apellido debe tener al menos 3 caracteres." })
+      .max(100, {
+        message: "El apellido no puede tener más de 100 caracteres.",
+      }),
+    email: z.string().email("Correo inválido").min(1, "Correo es requerido."),
+    thelephone: z.string().min(1, { message: "Teléfono es requerido." }),
+    password: z
+      .string()
+      .min(8, { message: "La contraseña debe tener al menos 8 caracteres." })
+      .regex(
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]/,
+        {
+          message:
+            "La contraseña debe incluir mayúscula, minúscula, número y carácter especial.",
+        },
+      ),
     confirmPassword: z
       .string()
-      .nonempty({ message: "Confirmar contraseña es requerido." }),
+      .min(1, { message: "Confirmar contraseña es requerido." }),
+    birthDate: z.string().optional(),
+    street: z.string().optional(),
+    number: z.string().optional(),
+    commune: z.string().optional(),
+    region: z.string().optional(),
+    postalCode: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden.",
@@ -39,23 +60,88 @@ const formSchema = z
   });
 
 export const RegisterPage = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
+      firtsName: "",
+      lastName: "",
       email: "",
-      phone: "",
-      birthdate: "",
+      thelephone: "",
       password: "",
       confirmPassword: "",
+      birthDate: "",
+      street: "",
+      number: "",
+      commune: "",
+      region: "",
+      postalCode: "",
     },
   });
 
-  const formError = null;
-
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    console.log("Formulario enviado:", values);
-    // Por ahora no hacemos lógica funcional
+    setIsLoading(true);
+    setFormError(null);
+
+    try {
+      console.log("Datos del formulario:", values);
+
+      // Preparar datos para enviar (incluyendo confirmPassword para el backend)
+      const registerData = {
+        firtsName: values.firtsName,
+        lastName: values.lastName,
+        email: values.email,
+        thelephone: values.thelephone,
+        password: values.password,
+        confirmPassword: values.confirmPassword,
+        birthDate: values.birthDate,
+        street: values.street,
+        number: values.number,
+        commune: values.commune,
+        region: values.region,
+        postalCode: values.postalCode,
+      };
+
+      console.log("Datos a enviar:", registerData);
+
+      const response = await authService.register(registerData);
+
+      console.log("Respuesta:", response);
+
+      if (response.success) {
+        toast.success("¡Registro exitoso! Redirigiendo al login...");
+        setTimeout(() => {
+          router.push("/login");
+        }, 1500);
+      } else {
+        const errorMessage = response.message || "Error al registrar usuario";
+        console.error("Error en respuesta:", errorMessage);
+        setFormError(errorMessage);
+        toast.error(errorMessage);
+      }
+    } catch (error: any) {
+      console.error("Error completo:", error);
+      console.error("Error response:", error.response);
+      console.error("Error message:", error.message);
+
+      let errorMessage = "Error al registrar usuario";
+
+      if (error.response?.data?.message) {
+        errorMessage = error.response.data.message;
+      } else if (error.message) {
+        errorMessage = error.message;
+      } else if (error.response?.status) {
+        errorMessage = `Error ${error.response.status}: ${error.response.statusText || "Error del servidor"}`;
+      }
+
+      setFormError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -64,7 +150,7 @@ export const RegisterPage = () => {
         {" "}
         {/* Ajusta la altura si el navbar mide 4rem */}
         {/* Lado izquierdo */}
-        <div className="md:w-1/2 w-full bg-blue-700 text-white flex flex-col justify-center items-center p-10">
+        <div className="md:w-1/2 w-full bg-black text-white flex flex-col justify-center items-center p-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 text-center">
             Crea tu cuenta <br className="hidden md:block" />
           </h1>
@@ -88,12 +174,26 @@ export const RegisterPage = () => {
               >
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="firtsName"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Nombre</FormLabel>
                       <FormControl>
-                        <Input placeholder="Juan Pérez" {...field} />
+                        <Input placeholder="Juan" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="lastName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Apellido</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Pérez" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -116,7 +216,7 @@ export const RegisterPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="phone"
+                  name="thelephone"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Teléfono</FormLabel>
@@ -130,7 +230,7 @@ export const RegisterPage = () => {
 
                 <FormField
                   control={form.control}
-                  name="birthdate"
+                  name="birthDate"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Fecha de nacimiento</FormLabel>
@@ -185,8 +285,8 @@ export const RegisterPage = () => {
                   </Alert>
                 )}
 
-                <Button type="submit" className="w-full">
-                  Registrarse
+                <Button type="submit" className="w-full" disabled={isLoading}>
+                  {isLoading ? "Registrando..." : "Registrarse"}
                 </Button>
               </form>
             </Form>

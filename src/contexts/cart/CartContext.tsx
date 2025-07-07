@@ -1,12 +1,21 @@
 "use client";
 
 import { createContext, useContext, useReducer, ReactNode } from "react";
-import { CartState, CartAction, cartReducer } from "./CartReducer";
+import { CartState, cartReducer } from "./CartReducer";
 import { CartItem } from "@/interfaces/Cart";
 
 interface CartContextType {
   state: CartState;
-  addToCart: (productId: string, quantity?: number) => void;
+  addToCart: (
+    productId: string,
+    quantity?: number,
+    productInfo?: {
+      name: string;
+      price: number;
+      image?: string;
+      stock: number;
+    },
+  ) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   clearCart: () => void;
@@ -31,10 +40,19 @@ interface CartProviderProps {
 export const CartProvider = ({ children }: CartProviderProps) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
-  const addToCart = (productId: string, quantity: number = 1) => {
+  const addToCart = (
+    productId: string,
+    quantity: number = 1,
+    productInfo?: {
+      name: string;
+      price: number;
+      image?: string;
+      stock: number;
+    },
+  ) => {
     dispatch({
       type: "ADD_TO_CART",
-      payload: { productId, quantity },
+      payload: { productId, quantity, productInfo },
     });
   };
 
@@ -61,13 +79,16 @@ export const CartProvider = ({ children }: CartProviderProps) => {
   };
 
   const getTotalItems = (): number => {
-    return state.items.reduce((total: number, item: CartItem) => total + item.quantity, 0);
+    return state.items.reduce(
+      (total: number, item: CartItem) => total + item.quantity,
+      0,
+    );
   };
 
   const getTotalPrice = (): number => {
     return state.items.reduce(
       (total: number, item: CartItem) => total + item.price * item.quantity,
-      0
+      0,
     );
   };
 

@@ -3,7 +3,8 @@ import { ProductDetailPage } from "@/views/productsPage/ProductDetailPage";
 export default async function ProductDetail({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  return <ProductDetailPage productId={params.id} />;
+  const { id } = await params;
+  return <ProductDetailPage productId={id} />;
 }

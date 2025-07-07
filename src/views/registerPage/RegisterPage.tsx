@@ -16,7 +16,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
-import { Navbar } from "@/components/Navbar";
 
 const formSchema = z
   .object({
@@ -61,8 +60,6 @@ export const RegisterPage = () => {
 
   return (
     <>
-      <Navbar />
-
       <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)]">
         {" "}
         {/* Ajusta la altura si el navbar mide 4rem */}

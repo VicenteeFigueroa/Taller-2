@@ -1,55 +1,67 @@
 "use client";
 
-import { User } from "@/interfaces/User";
-import { authReducer, AuthState } from "./AuthReducer";
-import { createContext, useReducer } from "react";
-import { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
+type User = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  role: string;
+};
 
-type AuthContextProps = {
+type AuthContextType = {
   user: User | null;
-  status: "authenticated" | "non-authenticated" | "checking";
-  auth: (user: User) => void;
+  token: string | null;
+  login: (user: User, token: string) => void;
   logout: () => void;
-  updateUser: (user: User) => void;
 };
 
-const authInitialState: AuthState = {
-  status: "checking",
+const AuthContext = createContext<AuthContextType>({
   user: null,
-};
+  token: null,
+  login: () => {},
+  logout: () => {},
+});
 
-export const AuthContext = createContext({} as AuthContextProps);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
 
-export const AuthProvider = ({ children }: AuthProviderProps) => {
-  const [state, dispatch] = useReducer(authReducer, authInitialState);
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    const storedToken = localStorage.getItem("token");
 
-  const auth = (user: User) => {
-    dispatch({ type: "auth", payload: { user } });
+    if (storedUser && storedToken) {
+      try {
+        setUser(JSON.parse(storedUser));
+        setToken(storedToken);
+      } catch (error) {
+        console.error("Error leyendo sesión almacenada", error);
+        setUser(null);
+        setToken(null);
+      }
+    }
+  }, []);
+
+  const login = (user: User, token: string) => {
+    setUser(user);
+    setToken(token);
+    localStorage.setItem("user", JSON.stringify(user));
+    localStorage.setItem("token", token);
   };
 
   const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("user");
     localStorage.removeItem("token");
-    dispatch({ type: "logout" });
-  };
-
-  const updateUser = (user: User) => {
-    dispatch({ type: "updateUser", payload: { user } });
   };
 
   return (
-    <AuthContext.Provider
-      value={{
-        ...state,
-        logout,
-        auth,
-        updateUser,
-      }}
-    >
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
+
+export const useAuth = () => useContext(AuthContext);

@@ -12,9 +12,10 @@ import {
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSuccess?: () => void;
 }
 
-export const LoginModal = ({ open, onOpenChange }: Props) => {
+export const LoginModal = ({ open, onOpenChange, onSuccess }: Props) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md p-0 shadow-xl">
@@ -22,7 +23,7 @@ export const LoginModal = ({ open, onOpenChange }: Props) => {
         <DialogDescription className="sr-only">
           Formulario para iniciar sesión en tu cuenta
         </DialogDescription>
-        <LoginPage />
+        <LoginPage onSuccess={onSuccess} />
       </DialogContent>
     </Dialog>
   );

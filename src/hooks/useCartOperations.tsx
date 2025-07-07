@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/contexts/cart/CartContext";
 import { CartService } from "@/clients/cartService";
+import { Product } from "@/interfaces/Product";
 
 export const useCartOperations = () => {
   const { state, addToCart, removeFromCart, updateQuantity, clearCart } =
@@ -353,6 +354,42 @@ export const useCartOperations = () => {
     }
   };
 
+  /**
+   * Agrega un producto al carrito usando información completa del producto
+   */
+  const addCompleteProductToCart = async (
+    product: Product,
+    quantity: number = 1,
+  ) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Validar stock disponible
+      if (quantity > product.stock) {
+        const errorMessage = `Stock insuficiente. Solo hay ${product.stock} unidades disponibles.`;
+        setError(errorMessage);
+        return { success: false, message: errorMessage };
+      }
+
+      // Agregar al carrito local con información completa
+      addToCart(product.id.toString(), quantity, product);
+
+      return {
+        success: true,
+        message: "Producto agregado al carrito",
+        product,
+      };
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Error al agregar producto";
+      setError(errorMessage);
+      return { success: false, message: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return {
     // Estado del carrito
     cartState: state,
@@ -369,6 +406,7 @@ export const useCartOperations = () => {
     clearAllCart,
     clearAllCartSimple,
     loadCartFromServer,
+    addCompleteProductToCart,
 
     // Utilidades
     clearError: () => setError(null),
